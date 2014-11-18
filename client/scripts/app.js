@@ -11,7 +11,7 @@ $(document).ready(function() {
     roomName === "ALL CHATS" ? roomName = undefined : roomName = roomName;
     $.ajax({
       // always use this url
-      url: 'http://127.0.0.1:3000/classes/chatterbox',
+      url: 'http://127.0.0.1:3000/classes/',
       data: {
         format:'json',
         order: '-createdAt',
@@ -20,8 +20,7 @@ $(document).ready(function() {
       type: 'GET',
       dataType: 'json',
       success: function(data) {
-        // response = data.results;
-        displayMessages(data);
+        displayMessages(data.results);
       },
       error: function (data) {
         console.error('chatterbox: Failed to send message');
@@ -35,7 +34,7 @@ $(document).ready(function() {
       newRooms[escapeHTML(messageArray[i].roomname)] = true;
       $newMessage = $('<li></li>');
       escapedMessage = escapeHTML(messageArray[i].username + ' says: ' +
-        messageArray[i].text);
+        messageArray[i].message);
       $newMessage.html(escapedMessage);
       $('.messages').append($newMessage);
     }
@@ -71,12 +70,12 @@ $(document).ready(function() {
   function postNewMessage (message) {
     var postObject = {
       roomname: $( ".roomSelect option:selected" ).text(),
-      text: message,
+      message: message,
       username: window.location.search.replace(/\?username=/, '')
     };
 
     $.ajax({
-      url: 'http://127.0.0.1:3000/classes/chatterbox',
+      url: 'http://127.0.0.1:3000/classes/',
       type: 'POST',
       data: JSON.stringify(postObject),
       contentType: 'application/json',

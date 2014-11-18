@@ -14,6 +14,10 @@ this file and include it in basic-server.js so that it actually works.
 **************************************************************/
 var url = require("url");
 var queryString = require("querystring");
+// var statusCode;
+// var headers;
+var classesRegEx;
+var newMessages;
 
 var requestHandler = function(request, response) {
 
@@ -55,12 +59,10 @@ var requestHandler = function(request, response) {
   //
   // You will need to change this if you are sending something
   // other than plain text, like JSON or HTML.
-  headers['Content-Type'] = "json";
+  // headers['Content-Type'] = "application/json";
 
   // .writeHead() writes to the request line and headers of the response,
   // which includes the status and all headers.
-  response.writeHead(statusCode, headers);
-
   // Make sure to always call response.end() - Node may not send
   // anything back to the client until you do. The string you pass to
   // response.end() will be the body of the response - i.e. what shows
@@ -69,22 +71,39 @@ var requestHandler = function(request, response) {
   // Calling .end "flushes" the response's internal buffer, forcing
   // node to actually send all the data over to the client.
 
-  var classesRegEx = /classes/
+  classesRegEx = /classes/;
 
   if (request.url.match(classesRegEx)) {
 
     if (request.method === 'GET') {
-      response.end(JSON.stringify(messages));
+      var room = theUrl.pathname.substring(9);
+      response.writeHead(statusCode, headers);
+      if(!room || room === 'messages'){
+        response.end(JSON.stringify(messages));
+      } else {
+        newMessages = {
+          results: messages.results.filter(function(item){
+            return item.roomname === room;
+          })
+        }
+        response.end(JSON.stringify(newMessages));
+      }
     }
-    if (request.method === 'POST') {
+    if (request.method === 'POST' || request.method === 'OPTIONS') {
+      statusCode = 201;
+      console.log(statusCode)
+      response.writeHead(statusCode, headers);
       request.on('data', function (chunk) {
-      //   console.log(chunk);
-        messages.results.push(JSON.parse(chunk));
+        messages.results.unshift(JSON.parse(chunk));
       })
+      response.end('Posted')
     }
+  } else {
+    statusCode = 404;
+    response.writeHead(statusCode, headers);
+    response.end('Not Found')
   }
 
-  response.end("Hello, World!");
 };
 
 // These headers will allow Cross-Origin Resource Sharing (CORS).
@@ -100,7 +119,8 @@ var defaultCorsHeaders = {
   "access-control-allow-origin": "*",
   "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
   "access-control-allow-headers": "content-type, accept",
-  "access-control-max-age": 10 // Seconds.
+  "access-control-max-age": 10,
+  "Content-Type": "application/json" // Seconds.
 };
 
 var messages = {
@@ -118,7 +138,7 @@ var messages = {
       message: "2nd message",
       createdAt: "2013-10-07T16:23:03.280Z",
       objectId: "teDOY3Rnpe",
-      roomname: "lobby",
+      roomname: "room1",
       text: "hello",
       updatedAt: "2013-10-07T16:22:03.280Z",
       username: "otherPerson"
