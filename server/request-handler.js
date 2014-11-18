@@ -1,3 +1,4 @@
+var exports = module.exports = {};
 /*************************************************************
 
 You should implement your request handler function in this file.
@@ -27,7 +28,11 @@ var requestHandler = function(request, response) {
   // Adding more logging to your server can be an easy way to get passive
   // debugging help, but you should always be careful about leaving stray
   // console.logs in your code.
+
+
+
   console.log("Serving request type " + request.method + " for url " + request.url);
+
 
   // The outgoing status.
   var statusCode = 200;
@@ -52,6 +57,17 @@ var requestHandler = function(request, response) {
   //
   // Calling .end "flushes" the response's internal buffer, forcing
   // node to actually send all the data over to the client.
+
+  if (request.url === '/classes/chatterbox') {
+    console.log("door");
+    if (request.method === 'GET') {
+      // return JSON.stringify(messages);
+    }
+    if (request.method === 'POST') {
+      messages.push(JSON.parse(request.data));
+    }
+  }
+
   response.end("Hello, World!");
 };
 
@@ -71,3 +87,6 @@ var defaultCorsHeaders = {
   "access-control-max-age": 10 // Seconds.
 };
 
+var messages = [];
+
+exports.requestHandler = requestHandler;
