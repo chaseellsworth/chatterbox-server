@@ -12,8 +12,19 @@ this file and include it in basic-server.js so that it actually works.
 *Hint* Check out the node module documentation at http://nodejs.org/api/modules.html.
 
 **************************************************************/
+var url = require("url");
+var queryString = require("querystring");
 
 var requestHandler = function(request, response) {
+
+  var theUrl = url.parse( request.url );
+
+  var queryObj = queryString.parse( theUrl.query );
+
+
+  // var obj = JSON.parse( queryObj.format );
+
+
   // Request and Response come from node's http module.
   //
   // They include information about both the incoming request, such as
@@ -44,7 +55,7 @@ var requestHandler = function(request, response) {
   //
   // You will need to change this if you are sending something
   // other than plain text, like JSON or HTML.
-  headers['Content-Type'] = "text/plain";
+  headers['Content-Type'] = "json";
 
   // .writeHead() writes to the request line and headers of the response,
   // which includes the status and all headers.
@@ -58,13 +69,18 @@ var requestHandler = function(request, response) {
   // Calling .end "flushes" the response's internal buffer, forcing
   // node to actually send all the data over to the client.
 
-  if (request.url === '/classes/chatterbox') {
-    console.log("door");
+  var classesRegEx = /classes\/chatterbox/
+
+  if (request.url.match(classesRegEx)) {
+
     if (request.method === 'GET') {
-      // return JSON.stringify(messages);
+       response.end(JSON.stringify(messages));
     }
     if (request.method === 'POST') {
-      messages.push(JSON.parse(request.data));
+      request.on('data', function (chunk) {
+      //   console.log(chunk);
+          messages.push(JSON.parse(chunk));
+      })
     }
   }
 
@@ -87,6 +103,27 @@ var defaultCorsHeaders = {
   "access-control-max-age": 10 // Seconds.
 };
 
-var messages = [];
+var messages = [
+  {
+    message: "hello",
+    createdAt: "2013-10-07T16:22:03.280Z",
+    objectId: "teDOY3Rnpe",
+    roomname: "lobby",
+    text: "hello",
+    updatedAt: "2013-10-07T16:22:03.280Z",
+    username: "gary"
+  },
+  {
+    message: "2nd message",
+    createdAt: "2013-10-07T16:22:03.280Z",
+    objectId: "teDOY3Rnpe",
+    roomname: "lobby",
+    text: "hello",
+    updatedAt: "2013-10-07T16:22:03.280Z",
+    username: "otherPerson"
+  }
+];
+
+
 
 exports.requestHandler = requestHandler;
