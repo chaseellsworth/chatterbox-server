@@ -69,17 +69,17 @@ var requestHandler = function(request, response) {
   // Calling .end "flushes" the response's internal buffer, forcing
   // node to actually send all the data over to the client.
 
-  var classesRegEx = /classes\/chatterbox/
+  var classesRegEx = /classes/
 
   if (request.url.match(classesRegEx)) {
 
     if (request.method === 'GET') {
-       response.end(JSON.stringify(messages));
+      response.end(JSON.stringify(messages));
     }
     if (request.method === 'POST') {
       request.on('data', function (chunk) {
       //   console.log(chunk);
-          messages.push(JSON.parse(chunk));
+        messages.results.push(JSON.parse(chunk));
       })
     }
   }
@@ -103,26 +103,28 @@ var defaultCorsHeaders = {
   "access-control-max-age": 10 // Seconds.
 };
 
-var messages = [
-  {
-    message: "hello",
-    createdAt: "2013-10-07T16:22:03.280Z",
-    objectId: "teDOY3Rnpe",
-    roomname: "lobby",
-    text: "hello",
-    updatedAt: "2013-10-07T16:22:03.280Z",
-    username: "gary"
-  },
-  {
-    message: "2nd message",
-    createdAt: "2013-10-07T16:22:03.280Z",
-    objectId: "teDOY3Rnpe",
-    roomname: "lobby",
-    text: "hello",
-    updatedAt: "2013-10-07T16:22:03.280Z",
-    username: "otherPerson"
-  }
-];
+var messages = {
+  results: [
+    {
+      message: "hello",
+      createdAt: "2013-10-07T16:22:03.280Z",
+      objectId: "teDOY3Rnpe",
+      roomname: "lobby",
+      text: "hello",
+      updatedAt: "2013-10-07T16:22:03.280Z",
+      username: "gary"
+    },
+    {
+      message: "2nd message",
+      createdAt: "2013-10-07T16:23:03.280Z",
+      objectId: "teDOY3Rnpe",
+      roomname: "lobby",
+      text: "hello",
+      updatedAt: "2013-10-07T16:22:03.280Z",
+      username: "otherPerson"
+    }
+  ]
+};
 
 
 
