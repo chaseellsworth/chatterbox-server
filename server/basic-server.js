@@ -3,6 +3,7 @@ var handler = require("./request-handler.js");
 
 
 var express = require("express");
+var fs = require("fs");
 var bodyParser = require('body-parser')
 var app = express();
 app.set('trust proxy', 'loopback')
@@ -17,26 +18,23 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
   extended: true
 }));
-// app.use(express.json());       // to support JSON-encoded bodies
-// app.use(express.urlencoded()); // to support URL-encoded bodies
 app.listen(3000);
 app.get('/', function(req, res) {
   res.send('This is the default room')
 });
 
-
+//GET requests
 app.get('/classes/', function(req, res) {
   res.send(handler.getAllMessages(req,res))
 });
 
-//Some other page
 app.get('/classes/room1', function(req, res) {
   res.send('Hello World!')
 });
 
-//I can respond to a form post
+
+//POST requests
 app.post('/classes', function(req, res) {
-  console.log(req.body);
   handler.addNewMessage(req, res)
   res.send("posted!")
 });

@@ -1,41 +1,54 @@
 var exports = module.exports = {};
-var url = require("url");
-var queryString = require("querystring");
-var statusCode;
-var headers;
-var classesRegEx;
-var newMessages;
+var fs = require("fs");
+var messages = function(){
+  return  JSON.parse(fs.readFileSync('messages.json', 'utf8'));
+}
 
 var getAllMessages = exports.getAllMessages = function(req, res) {
-  return JSON.stringify(messages);
+  return fs.readFileSync('messages.json', 'utf8');
 }
 
 var addNewMessage = exports.addNewMessage = function(req, res) {
+  messages = messages();
   messages.results.unshift(req.body);
-}
-
-var messages = {
-  results: [
-    {
-      message: "hello",
-      createdAt: "2013-10-07T16:22:03.280Z",
-      objectId: "teDOY3Rnpe",
-      roomname: "lobby",
-      text: "hello",
-      updatedAt: "2013-10-07T16:22:03.280Z",
-      username: "Jack"
-    },
-    {
-      message: "2nd message",
-      createdAt: "2013-10-07T16:23:03.280Z",
-      objectId: "teDOY3Rnpe",
-      roomname: "room1",
-      text: "hello",
-      updatedAt: "2013-10-07T16:22:03.280Z",
-      username: "otherPerson"
-    }
-  ]
+  fs.writeFile('messages.json', JSON.stringify(messages), function (err) {
+    if (err) { throw err; }
+    console.log('It\'s saved!');
+  })
 };
+
+
+// var url = require("url");
+// var queryString = require("querystring");
+// var statusCode;
+// var headers;
+// var classesRegEx;
+// var newMessages;
+
+
+
+// var messages = {
+//   results: [
+//     {
+//       message: "hello",
+//       createdAt: "2013-10-07T16:22:03.280Z",
+//       objectId: "teDOY3Rnpe",
+//       roomname: "lobby",
+//       text: "hello",
+//       updatedAt: "2013-10-07T16:22:03.280Z",
+//       username: "Jack"
+//     },
+//     {
+//       message: "2nd message",
+//       createdAt: "2013-10-07T16:23:03.280Z",
+//       objectId: "teDOY3Rnpe",
+//       roomname: "room1",
+//       text: "hello",
+//       updatedAt: "2013-10-07T16:22:03.280Z",
+//       username: "otherPerson"
+//     }
+//   ]
+// };
 
 
 
